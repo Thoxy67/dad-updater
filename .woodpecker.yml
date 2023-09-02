@@ -1,12 +1,42 @@
-matrix:
-  RUST: [stable, beta, nightly]
-
-steps:
+pipeline:
   test:
     image: rust
     environment: [CARGO_TERM_COLOR=always]
     commands:
-      - rustup default $RUST
+      - rustup default nightly
       - cargo check
       - cargo test
+    when:
+      event: push
 
+  build:
+    image: rust
+    environment: [CARGO_TERM_COLOR=always]
+    commands:
+      - rustup default nightly
+      - cargo build
+    when:
+      event: push
+
+  release:
+    image: rust
+    environment: [CARGO_TERM_COLOR=always]
+    commands:
+      - rustup default nightly
+      - cargo build --release
+    when:
+      event: tag
+
+  publish:
+    image: plugins/gitea-release
+    settings:
+      api_key:
+        from_secret: gitea_api_key
+      base_url: https://git.thoxy.xyz
+      files: target/release/dad-updater
+      checksum: sha1
+      secrets:
+        - source: gitea_api_key
+          target: plugin_api_key
+    when:
+      event: tag

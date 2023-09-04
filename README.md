@@ -26,7 +26,7 @@ After building and installing the application, The updater can be run using the
 following command:
 
 ```
-DAD_PATH="/home/thoxy/.local/share/bottles/bottles/Dark-and-Darker/drive_c/Program Files/IRONMACE/Dark and Darker/" dad-updater
+DAD_PATH="$HOME/.local/share/bottles/bottles/Dark-and-Darker/drive_c/Program Files/IRONMACE/Dark and Darker/" dad-updater
 ```
 
 ### Optimized Use with [Bottles](https://bottles.io/)

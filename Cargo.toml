@@ -1,17 +1,26 @@
 [package]
 name = "dad-updater"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
+authors = ["thoxy"]
+license = "MIT"
+description = "Dark and Darker updater"
+repository = "https://github.com/thoxy/dad-updater"
+readme = "README.md"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[profile.release]
+opt-level = "z"
+lto = true
+codegen-units = 1
+panic = "abort"
 
 [dependencies]
-tokio = { version = "1", features = ["full"] }
-reqwest = { version = "0.11", features = ["stream" ]}
-futures = { version = "0.3" }
-csv = "1"
-sha256 = "1"
-lazy_static = "1"
-indicatif = "0.17"
+tokio = { version = "1.32.0", features = ["full"] }
+reqwest = { version = "0.11.20", features = ["stream" ]}
+futures = { version = "0.3.28" }
+csv = "1.2.2"
+sha256 = "1.4.0"
+lazy_static = "1.4.0"
+indicatif = "0.17.6"
 clap = { version = "4.4.2", features = ["derive", "env"] }
-colored = "2"
+colored = "2.0.4"

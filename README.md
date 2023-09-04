@@ -8,21 +8,6 @@ game. It downloads or verifies the latest files of the game installed.
 Before running the updater, ensure that you have the following dependencies
 installed:
 
-## Usage
-
-To use the Dark and Darker game updater, follow these steps:
-
-1. Clone the repository or download the source code files.
-2. Install Rust and the required dependencies as mentioned in the prerequisites.
-3. Open the terminal or command prompt and navigate to the project directory.
-4. Build and run the application using the following command:
-
-```
-cargo run --release
-```
-
-This command will compile the code and execute the updater.
-
 ## Installation
 
 1. Clone the repository or download the source code files.
@@ -34,6 +19,49 @@ This command will compile the code and execute the updater.
 cargo build --release
 cargo install dad-updater --path .
 ```
+
+## Usage
+
+After building and installing the application, The updater can be run using the
+following command:
+
+```
+DAD_PATH="/home/thoxy/.local/share/bottles/bottles/Dark-and-Darker/drive_c/Program Files/IRONMACE/Dark and Darker/" dad-updater
+```
+
+### Optimized Use with [Bottles](https://bottles.io/)
+
+1. Create bottles for gaming.
+2. Add the following required dependencies: allfonts, vcredist2019, dotnet48.
+3. Install the
+   [Blacksmith Launcher](https://webdown.darkanddarker.com/Blacksmith%20Installer.exe)
+   in the bottles.
+4. Launch the **Blacksmith Launcher** and log in to your account.
+5. Click the play/install button on the launcher.
+6. Close the launcher.
+7. Click on the three dots, browse the file, go one directory up, and locate the
+   **Dark and Darker** directory inside the **IRONMACE** directory. Copy the
+   path of this directory to the environment variable **DAD_PATH** in the
+   bottles' environment settings.
+8. Modify the launch command to `dad-updater %command%`.
+
+To further optimize Bottles, you can:
+
+- Activate Feral Gamemode.
+- Set up the Steam environment.
+- Use Proton-GE as the executor.
+
+If you want to use Proton-GE, you need to set the following environment
+variables:
+
+- STEAM_COMPAT_CLIENT_INSTALL_PATH=$HOME/.steam/steam
+- STEAM_COMPAT_DATA_PATH=$HOME/.local/share/Steam/steamapps/compatdata
+
+For optimal performance on an AMD card, add the following two environment
+variables:
+
+- RADV_PERFTEST=gpl,sam,nggc
+- VK_ICDR_PATH=/usr/share/vulkan/icd.d/radeon_icd.x86_64.json
 
 ## Command-Line Arguments
 

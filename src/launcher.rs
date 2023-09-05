@@ -1,5 +1,7 @@
+use colored::Colorize;
+use indicatif::{MultiProgress, ProgressBar, ProgressStyle};
 use serde::{Deserialize, Serialize};
-use std::path::Path;
+use std::{path::Path, sync::Arc};
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -92,4 +94,43 @@ pub async fn get_launcher_url(
     }
 
     Ok(files)
+}
+
+pub async fn update_launcher(
+    p: String,
+    args: crate::Args,
+) -> Result<(), Box<dyn std::error::Error>> {
+    let semaphore = Arc::new(tokio::sync::Semaphore::new(args.threads));
+
+    let mut join_handles = Vec::new();
+    let multi_progress = MultiProgress::new();
+
+    for u in crate::launcher::get_launcher_url(p).await? {
+        let semaphore_permit = crate::download::acquire_semaphore_permit(semaphore.clone()).await;
+
+        let progress_bar = multi_progress.add(ProgressBar::new(u.size));
+        let sty = ProgressStyle::default_bar()
+                .template(
+                    format!(
+                        "{} : {}",
+                         "{spinner:.green} [{elapsed_precise}] │{bar:40.yellow/red}│ {bytes}/{total_bytes} ({bytes_per_sec}, {eta}) {msg}", u.file_name.bold(),
+                    )
+                    .as_str(),
+                )?
+                .progress_chars("▓▒░");
+
+        progress_bar.set_style(sty);
+
+        let download_task = tokio::spawn(crate::download::download_file(
+            u,
+            semaphore_permit,
+            args.speed,
+            progress_bar.clone(),
+        ));
+        join_handles.push(download_task);
+    }
+
+    crate::download::wait_for_tasks_completion(join_handles).await;
+    println!("\n\n{}", "Blacksmith Launcher up to date\n\n".green());
+    Ok(())
 }

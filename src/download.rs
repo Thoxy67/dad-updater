@@ -21,7 +21,7 @@ pub async fn download_file(
 
     if full_path.exists() {
         if existing_files(url.clone()).await.is_ok() {
-            progress_bar.finish_with_message("[skipped] file already up to date");
+            progress_bar.finish_with_message("[skipped] already up to date");
             return;
         }
     }
@@ -43,14 +43,9 @@ pub async fn download_file(
 
             tokio::time::sleep(delay_duration).await;
         }
-
-        // Update the progress bar
         progress_bar.inc(length as u64);
     }
-
-    progress_bar.finish_with_message("[ok] file downloaded and updated");
-
-    // Release the semaphore permit
+    progress_bar.finish_with_message("[ok] file updated");
     drop(semaphore_permit);
 }
 

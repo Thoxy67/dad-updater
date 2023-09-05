@@ -67,9 +67,12 @@ variables:
 
 The updater accepts the following command-line arguments:
 
-- `-p`, `--path`: Specify the path to the game installation directory. This
+- `-g`, `--game-path`: Specify the path to the game installation directory. This
   argument is optional and defaults to the value of the `DAD_PATH` environment
   variable.
+- `-l`, `--launcher-path`: Specify the path to the launcher installation
+  directory. This argument is optional and defaults to the value of the
+  `BLACKSMITH_PATH` environment variable. (optional)
 - `-s`, `--speed`: Set the download speed limit in bytes per second. This
   argument is optional and defaults to the value of the `DAD_DOWNLOAD_SPEED`
   environment variable or `0` if not provided (`0` = `no limit`).

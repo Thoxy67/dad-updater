@@ -68,14 +68,13 @@ pub async fn get_launcher_url(
         );
         let sha256 = file.hash.to_lowercase();
         let size = file.size;
-        let linux_path = full_path.as_os_str().to_str().unwrap().to_string();
         if file.real_file_name != None {
             let full_path2 = Path::new(&path)
                 .join(&dir)
                 .join(&file.real_file_name.clone().unwrap());
             files.push(crate::download::Download {
                 path: full_path2.as_os_str().to_str().unwrap().to_string(),
-                linux_path: linux_path.clone(),
+                linux_path: full_path2.as_os_str().to_str().unwrap().to_string(),
                 url: url.clone(),
                 file_name: file.real_file_name.unwrap(),
                 sha256: sha256.clone(),
@@ -84,7 +83,7 @@ pub async fn get_launcher_url(
         }
         files.push(crate::download::Download {
             path: full_path.as_os_str().to_str().unwrap().to_string(),
-            linux_path,
+            linux_path: full_path.as_os_str().to_str().unwrap().to_string(),
             url,
             file_name: file.name,
             sha256,

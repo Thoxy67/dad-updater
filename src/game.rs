@@ -43,7 +43,7 @@ pub async fn get_game_urls(
         let file_path = record[0].to_string();
         let file_name = file_path.split('\\').last().unwrap().to_string();
         let uri = file_path.replace("\\", "/");
-        let sha256 = record[1].to_string();
+        let sha256 = record[1].to_string().to_lowercase();
         let size = record[2].parse::<u64>().unwrap();
         // Remove the first character
         let full_path = Path::new(&path).join(&uri.clone().get(1..).unwrap().to_string());

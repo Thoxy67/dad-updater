@@ -25,19 +25,56 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let args = Args::parse();
 
     let semaphore = Arc::new(tokio::sync::Semaphore::new(args.threads));
+
+    match args.launcher_path {
+        Some(p) => {
+            let join_handles = Vec::new();
+
+            let multi_progress = MultiProgress::new();
+            for u in crate::launcher::get_launcher_url(p).await? {
+                let mut join_handles = Vec::new();
+
+                let multi_progress = MultiProgress::new();
+                let semaphore_permit =
+                    crate::download::acquire_semaphore_permit(semaphore.clone()).await;
+
+                // Create a new ProgressBar for each download task
+                let progress_bar = multi_progress.add(ProgressBar::new(u.size));
+                let sty = ProgressStyle::with_template(
+                    format!(
+                        "{} {}",
+                        u.file_name, "{spinner:.green} [{elapsed_precise}] │{wide_bar:.blue/magenta}│ {bytes}/{total_bytes} ({bytes_per_sec}, {eta}) {msg}",
+                    )
+                    .as_str(),
+                )
+                .unwrap()
+                .progress_chars("▓▒░");
+
+                progress_bar.set_style(sty);
+
+                let download_task = tokio::spawn(crate::download::download_file(
+                    u,
+                    semaphore_permit,
+                    args.speed,
+                    progress_bar.clone(),
+                ));
+
+                join_handles.push(download_task);
+            }
+
+            crate::download::wait_for_tasks_completion(join_handles).await;
+            let _ = multi_progress.clear();
+            drop(multi_progress);
+
+            println!("\n\n{}", "Blacksmith Launcher up to date".green());
+        }
+        None => (),
+    };
     let mut join_handles = Vec::new();
 
     let multi_progress = MultiProgress::new();
 
-    let mut file_urls = crate::game::get_game_urls(args.game_path).await?;
-    match args.launcher_path {
-        Some(p) => {
-            let b = crate::launcher::get_launcher_url(p).await?;
-            file_urls.extend(b);
-        }
-        None => (),
-    };
-    for u in file_urls {
+    for u in crate::game::get_game_urls(args.game_path).await? {
         let semaphore_permit = crate::download::acquire_semaphore_permit(semaphore.clone()).await;
 
         // Create a new ProgressBar for each download task

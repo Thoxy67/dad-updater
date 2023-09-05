@@ -5,10 +5,15 @@ game. It downloads or verifies the latest files of the game installed.
 
 ## Prerequisites
 
-Before running the updater, ensure that you have the following dependencies
-installed:
+You need to have Rust installed on your system.
 
 ## Installation
+
+### Simple
+
+Simply run `cargo install dad-updater` in your terminal
+
+### Use source
 
 1. Clone the repository or download the source code files.
 2. Install Rust and the required dependencies as mentioned in the prerequisites.

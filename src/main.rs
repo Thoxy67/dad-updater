@@ -6,7 +6,7 @@ mod launcher;
 
 #[derive(Parser, Debug, Clone)]
 #[command(author, version, about, long_about = None)]
-struct Args {
+pub struct Args {
     #[arg(short, long, env = "DAD_PATH")]
     game_path: String,
     #[arg(short, long, env = "BLACKSMITH_PATH")]

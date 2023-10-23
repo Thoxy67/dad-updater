@@ -25,6 +25,7 @@ pub async fn download_file(
             return;
         }
     }
+
     std::fs::create_dir_all(prefix).unwrap();
 
     let mut file = tokio::fs::File::create(&full_path).await.unwrap();
@@ -44,6 +45,9 @@ pub async fn download_file(
             tokio::time::sleep(delay_duration).await;
         }
         progress_bar.inc(length as u64);
+    }
+    if url.real_file_name.is_some() {
+        std::fs::copy(full_path, url.real_file_name.unwrap()).unwrap();
     }
     progress_bar.finish_with_message("[ok] file updated");
     drop(semaphore_permit);
@@ -78,4 +82,5 @@ pub struct Download {
     pub sha256: String,
     pub size: u64,
     pub linux_path: String,
+    pub real_file_name: Option<String>,
 }

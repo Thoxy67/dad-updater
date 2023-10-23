@@ -32,7 +32,7 @@ pub async fn get_launcher_url(
     headers.insert(
         reqwest::header::USER_AGENT,
         reqwest::header::HeaderValue::from_static(
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/114.0",
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/119.0",
         ),
     );
     headers.insert(
@@ -70,26 +70,29 @@ pub async fn get_launcher_url(
         );
         let sha256 = file.hash.to_lowercase();
         let size = file.size;
-        if file.real_file_name != None {
-            let full_path2 = Path::new(&path)
-                .join(&dir)
-                .join(&file.real_file_name.clone().unwrap());
-            files.push(crate::download::Download {
-                path: full_path2.as_os_str().to_str().unwrap().to_string(),
-                linux_path: full_path2.as_os_str().to_str().unwrap().to_string(),
-                url: url.clone(),
-                file_name: file.real_file_name.unwrap(),
-                sha256: sha256.clone(),
-                size: size.clone(),
-            });
-        }
+
         files.push(crate::download::Download {
             path: full_path.as_os_str().to_str().unwrap().to_string(),
             linux_path: full_path.as_os_str().to_str().unwrap().to_string(),
-            url,
+            url: url.clone(),
             file_name: file.name,
-            sha256,
-            size,
+            sha256: sha256.clone(),
+            size: size.clone(),
+            real_file_name: {
+                if file.real_file_name.is_some() {
+                    Some(
+                        Path::new(&path)
+                            .join(&dir)
+                            .join(&file.real_file_name.clone().unwrap())
+                            .as_os_str()
+                            .to_str()
+                            .unwrap()
+                            .to_string(),
+                    )
+                } else {
+                    None
+                }
+            },
         });
     }
 

@@ -11,7 +11,7 @@ pub async fn get_game_urls(
     headers.insert(
         reqwest::header::USER_AGENT,
         reqwest::header::HeaderValue::from_static(
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/114.0",
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/119.0",
         ),
     );
     headers.insert(
@@ -59,6 +59,7 @@ pub async fn get_game_urls(
             file_name,
             sha256,
             size,
+            real_file_name: None,
         });
     }
     Ok(files)

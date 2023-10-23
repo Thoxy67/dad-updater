@@ -20,7 +20,7 @@ Simply run `cargo install dad-updater` in your terminal
 3. Open the terminal or command prompt and navigate to the project directory.
 4. Build and install the application using the following command:
 
-```
+```console
 cargo build --release
 cargo install dad-updater --path .
 ```
@@ -30,7 +30,7 @@ cargo install dad-updater --path .
 After building and installing the application, The updater can be run using the
 following command:
 
-```
+```console
 DAD_PATH="$HOME/.local/share/bottles/bottles/Dark-and-Darker/drive_c/Program Files/IRONMACE/Dark and Darker/" dad-updater
 ```
 
@@ -59,14 +59,14 @@ To further optimize Bottles, you can:
 If you want to use Proton-GE, you need to set the following environment
 variables:
 
-- STEAM_COMPAT_CLIENT_INSTALL_PATH=$HOME/.steam/steam
-- STEAM_COMPAT_DATA_PATH=$HOME/.local/share/Steam/steamapps/compatdata
+- `STEAM_COMPAT_CLIENT_INSTALL_PATH=$HOME/.steam/steam`
+- `STEAM_COMPAT_DATA_PATH=$HOME/.local/share/Steam/steamapps/compatdata`
 
 For optimal performance on an AMD card, add the following two environment
 variables:
 
-- RADV_PERFTEST=gpl,sam,nggc
-- VK_ICDR_PATH=/usr/share/vulkan/icd.d/radeon_icd.x86_64.json
+- `RADV_PERFTEST=gpl`
+- `VK_ICDR_PATH=/usr/share/vulkan/icd.d/radeon_icd.x86_64.json`
 
 ## Command-Line Arguments
 

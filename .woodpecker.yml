@@ -1,4 +1,4 @@
-pipeline:
+steps:
   test:
     image: rust
     environment: [CARGO_TERM_COLOR=always]

@@ -1,5 +1,6 @@
 use clap::Parser;
 use colored::Colorize;
+mod config;
 mod download;
 mod game;
 mod launcher;

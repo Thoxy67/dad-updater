@@ -1,3 +1,4 @@
+use crate::config::*;
 use colored::Colorize;
 use indicatif::{MultiProgress, ProgressBar, ProgressStyle};
 use serde::{Deserialize, Serialize};
@@ -31,22 +32,20 @@ pub async fn get_launcher_url(
     let mut headers = reqwest::header::HeaderMap::new();
     headers.insert(
         reqwest::header::USER_AGENT,
-        reqwest::header::HeaderValue::from_static(
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/119.0",
-        ),
+        reqwest::header::HeaderValue::from_static(USER_AGENT),
     );
     headers.insert(
         reqwest::header::CONNECTION,
-        reqwest::header::HeaderValue::from_static("keep-alive"),
+        reqwest::header::HeaderValue::from_static(CONNECTION),
     );
     headers.insert(
         reqwest::header::CACHE_CONTROL,
-        reqwest::header::HeaderValue::from_static("no-cache"),
+        reqwest::header::HeaderValue::from_static(CACHE_CONTROL),
     );
 
     headers.insert(
         reqwest::header::HOST,
-        reqwest::header::HeaderValue::from_static("cdn.darkanddarker.com"),
+        reqwest::header::HeaderValue::from_static(HOST),
     );
     let res = client
         .get("http://cdn.darkanddarker.com/launcher/launcherinfo.json")
@@ -56,45 +55,39 @@ pub async fn get_launcher_url(
         .json::<Root>()
         .await?;
 
-    let mut files = Vec::new();
-    for file in res.files {
-        let dir = match file.dir {
-            Some(dir) => dir,
-            None => "".to_string(),
-        };
-        let full_path = Path::new(&path).join(&dir).join(&file.name);
-        let url = format!(
-            "http://cdn.darkanddarker.com/launcher/{}/{}",
-            dir.clone(),
-            file.name,
-        );
-        let sha256 = file.hash.to_lowercase();
-        let size = file.size;
+    const BASE_URL: &str = "http://cdn.darkanddarker.com/launcher";
 
-        files.push(crate::download::Download {
-            path: full_path.as_os_str().to_str().unwrap().to_string(),
-            linux_path: full_path.as_os_str().to_str().unwrap().to_string(),
-            url: url.clone(),
-            file_name: file.name,
-            sha256: sha256.clone(),
-            size: size.clone(),
-            real_file_name: {
-                if file.real_file_name.is_some() {
-                    Some(
-                        Path::new(&path)
-                            .join(&dir)
-                            .join(&file.real_file_name.clone().unwrap())
-                            .as_os_str()
-                            .to_str()
-                            .unwrap()
-                            .to_string(),
-                    )
-                } else {
-                    None
-                }
-            },
-        });
-    }
+    let files: Vec<crate::download::Download> = res
+        .files
+        .into_iter()
+        .map(|file| {
+            let dir = file.dir.unwrap_or("".to_string());
+            let full_path = Path::new(&path).join(&dir).join(&file.name);
+            let url = format!("{}/{}/{}", BASE_URL, dir.clone(), file.name);
+            let sha256 = file.hash.to_lowercase();
+            let size = file.size;
+
+            let real_file_name = file.real_file_name.as_ref().map(|real_name| {
+                Path::new(&path)
+                    .join(&dir)
+                    .join(real_name)
+                    .as_os_str()
+                    .to_str()
+                    .unwrap()
+                    .to_string()
+            });
+
+            crate::download::Download {
+                path: full_path.as_os_str().to_str().unwrap().to_string(),
+                linux_path: full_path.as_os_str().to_str().unwrap().to_string(),
+                url,
+                file_name: file.name,
+                sha256,
+                size,
+                real_file_name,
+            }
+        })
+        .collect();
 
     Ok(files)
 }

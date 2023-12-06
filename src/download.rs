@@ -94,4 +94,5 @@ pub struct Download {
     pub size: u64,
     pub linux_path: String,
     pub real_file_name: Option<String>,
+    pub launcher_file: bool,
 }

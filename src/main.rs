@@ -4,6 +4,7 @@ mod config;
 mod download;
 mod game;
 mod launcher;
+mod update;
 
 #[derive(Parser, Debug, Clone)]
 #[command(author, version, about, long_about = None)]
@@ -33,11 +34,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let args = Args::parse();
 
-    if let Some(p) = args.launcher_path.clone() {
-        println!("{}", "Updating launcher...".yellow());
-        crate::launcher::update_launcher(p, args.clone()).await?
-    }
-    println!("{}", "Updating game...".yellow());
-    crate::game::update_game(args).await?;
+    crate::update::update(args).await?;
     Ok(())
 }
